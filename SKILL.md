@@ -3,7 +3,7 @@ name: m-interview
 description: 设计、修改和审核定性研究的访谈简报与现场访谈大纲（访谈提纲、深访大纲、座谈会提纲、专家访谈提纲）。覆盖用户深访、专家访谈和座谈会，支持定向案头调研与中文默认产品。不用于转写、访谈分析、招募问卷或实时主持。
 license: MIT
 metadata:
-  version: 0.4.2
+  version: 0.4.3
   contract: m-interview-contract-v1
 ---
 

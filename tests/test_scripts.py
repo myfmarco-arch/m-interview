@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 LINT = ROOT / "scripts/lint_guide.py"
 CHECK = ROOT / "scripts/check_repo.py"
+PUBLISH = ROOT / "scripts/check_publish.py"
 
 
 def run(*args):
@@ -241,6 +242,36 @@ class ScriptTests(unittest.TestCase):
         module = "## 二、各自情况（20mins）\n#### 【最近一次】请讲讲最近一次的情况。（轮流）\n- 当时怎么处理的？\n"
         result = self.lint_guide(self.focus_group("座谈会｜90mins｜用户｜v01", module))
         self.assertIn("no participant count", result.stdout)
+
+    def publish_check(self, content):
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory) / "repo"
+            corpus = Path(directory) / "private"
+            repo.mkdir()
+            corpus.mkdir()
+            (corpus / "old-guide.md").write_text("请您回忆一下上次参加星河项目内部评审时，团队是怎么分工推进的？\n", encoding="utf-8")
+            terms = Path(directory) / "terms.txt"
+            terms.write_text("# 内部词\n星河项目\n", encoding="utf-8")
+            (repo / "guide.md").write_text(content, encoding="utf-8")
+            git = ["git", "-C", str(repo), "-c", "user.name=t", "-c", "user.email=t@example.com"]
+            subprocess.run(git[:3] + ["init", "-q"], check=True)
+            subprocess.run(git + ["add", "."], check=True)
+            subprocess.run(git + ["commit", "-q", "-m", "x"], check=True)
+            return run(str(PUBLISH), "--repo", str(repo), "--all", "--denylist", str(terms), "--corpus", str(corpus))
+
+    def test_publish_check_passes_clean_text(self):
+        result = self.publish_check("请您帮我回忆一下最近一次换手机的经过。\n")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_publish_check_flags_internal_term(self):
+        result = self.publish_check("这次访谈来自星河项目。\n")
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("term", result.stdout)
+
+    def test_publish_check_flags_copied_line(self):
+        result = self.publish_check("请您回忆一下上次参加内部评审时，团队是怎么分工推进的？\n")
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("copy", result.stdout)
 
 
 if __name__ == "__main__":
