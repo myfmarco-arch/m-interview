@@ -1,7 +1,12 @@
 schema_version: 2
 id: interview-zh-default
-version: 0.4.1
+version: 0.4.2
 framework_contract: m-interview-contract-v1
+
+# 运行时只读本文件前 9 行：下面三项都是默认值且没有 local.yaml 时，按 SKILL.md 列出的路径读取。这三项不要移到第 9 行之后；其余条目供脚本和自定义产品使用。
+product: interview-zh-default
+local_override: local.yaml
+overlays: []
 
 contracts:
   artifacts: contracts/artifacts.md
@@ -14,6 +19,7 @@ services:
   research_design: references/services/research-design.md
   desk_research: references/services/desk-research.md
 
+# 修改验证清单时，同步 SKILL.md 第 5 步。
 validation:
   always:
     - references/services/validation/core.md
@@ -65,9 +71,6 @@ products:
     guide_format: references/products/interview-en-minimal/guide-template.md
     naming: references/products/interview-en-minimal/naming.md
 
-product: interview-zh-default
-local_override: local.yaml
-
 adapters:
   default: markdown
   available:
@@ -81,8 +84,6 @@ tools:
   check_repo: scripts/check_repo.py
   run_evals: scripts/run_evals.py
   contract_manifest: scripts/contract_manifest.py
-
-overlays: []
 
 evals:
   conformance: evals/conformance/cases.yaml

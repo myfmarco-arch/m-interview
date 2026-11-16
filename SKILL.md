@@ -3,7 +3,7 @@ name: m-interview
 description: 设计、修改和审核定性研究的访谈简报与现场访谈大纲（访谈提纲、深访大纲、座谈会提纲、专家访谈提纲）。覆盖用户深访、专家访谈和座谈会，支持定向案头调研与中文默认产品。不用于转写、访谈分析、招募问卷或实时主持。
 license: MIT
 metadata:
-  version: 0.4.1
+  version: 0.4.2
   contract: m-interview-contract-v1
 ---
 
@@ -21,7 +21,9 @@ metadata:
 
 ### 1. 路由
 
-先读 [产品清单](product.yaml) 和 [任务路由](references/services/task-routing.md)。确定工作模式：`create`、`revise`、`audit`、`consult` 或 `quick-ask`。
+先读 [任务路由](references/services/task-routing.md)，确定工作模式：`create`、`revise`、`audit`、`consult` 或 `quick-ask`。
+
+再读 [产品清单](product.yaml) 的前 9 行，并查看根目录有没有 `local.yaml`。`product` 为 `interview-zh-default`、`overlays` 为空、没有 local.yaml，且用户没指定其他产品或 overlay 时，按本文件的路径读取；否则按产品清单、local.yaml 和 [覆盖合同](contracts/overlay-contract.md) 加载。
 
 首轮只确认会改变形式、方法、伦理或现场执行的缺口。不要展示方法库，不要输出完整过程说明。
 
@@ -31,15 +33,13 @@ metadata:
 - **draft**：设计条件齐了，但开场需要的研究用途、记录方式或匿名边界未确认，也没有生效 overlay 提供的团队标准同意信息。交付完整简报和完整大纲草稿；未确认的项目只在开场写成“【执行前补：……】”空位，并在文档外集中问一次。设计上还有其他假设时，也停在 draft，假设写在文档外。
 - **ready**：设计条件、方法、伦理和时间都已确认，验证中没有未通过的 error。交付正式文档。
 
-不补写研究用途、记录方式、匿名边界、发起方或后续安排。跳过和退出默认写明。细则见任务路由。
+不补写研究用途、记录方式、匿名边界、发起方或后续安排。跳过和退出默认写明。伦理信息的来源和例外见任务路由。
 
 ### 3. 选择方法
 
-先读 [研究设计服务](references/services/research-design.md)、对应的形式模块和 [方法索引](references/modules/methods/index.md)。再按 SRQ 只读取必要的方法卡。每个 SRQ 选择一个主方法，只有能增加证据且不挤占关键时间时才加入辅助方法。
+先读 [研究设计服务](references/services/research-design.md)、对应的形式模块（`references/modules/formats/` 下的 `user-depth.md`、`expert.md` 或 `focus-group.md`）和 [方法索引](references/modules/methods/index.md)。再按 SRQ 只读取必要的方法卡。每个 SRQ 一个主方法，选法见研究设计服务。方法卡按方法索引的“读取规则”使用。
 
-方法卡只提供证据路径。不要把方法名写进现场问题，也不要为了显示专业而堆叠方法。方法卡的示例问句要按当前对象重写，不要照抄。
-
-案头调研：用户要求时直接做。满足 [案头调研服务](references/services/desk-research.md) 的启动条件时，在首轮澄清里提议一次，由用户决定。案头资料单独成文，不把搜索过程写入简报或大纲。
+案头调研：用户要求时直接做。满足 [案头调研服务](references/services/desk-research.md) 的启动条件时，在首轮澄清里提议一次，由用户决定。案头资料单独成文，用 [案头调研模板](references/products/interview-zh-default/desk-template.md)，不把搜索过程写入简报或大纲。
 
 ### 4. 生成材料
 
@@ -52,9 +52,13 @@ metadata:
 
 必问/可删和删减顺序写在简报，不进大纲。
 
+用户要专家外发版、访前告知或访后速记时，读 `references/adapters/` 下对应的 `expert-external.md`、`participant-notice.md` 或 `post-session-note.md`。
+
 ### 5. 验证与交付
 
-按 `product.yaml` 的验证清单执行。交付前逐题自检：
+验证规则：[核心规则](references/services/validation/core.md)；默认中文产品加 [格式规则](references/products/interview-zh-default/format-validation.md)；按形式加 `references/services/validation/` 下的 `user-depth.md`、`expert.md` 或 `focus-group.md`；有案头调研再加同目录的 `desk-research.md`；生效 overlay 新增的规则一并执行。
+
+交付前逐题自检：
 
 1. 这题对应哪个 SRQ？对应不上就删。
 2. 问的是已经发生的事吗？主问题不问将来意愿或假设情境。
@@ -70,7 +74,7 @@ metadata:
 ## 工作模式
 
 - **create**：先判断状态，再生成简报、现场大纲和按需案头调研。
-- **revise**：只修改用户指定范围；保留有效的问题标签和语义，记录版本与修改原因。
+- **revise**：只修改用户指定范围；保留有效的问题标签和语义，记录版本与修改原因。版本号按 [命名规则](references/products/interview-zh-default/naming.md) 递增。
 - **audit**：先检查提供的材料，按严重程度列问题，用户要求时再重写。没有材料时只给检查范围，不假装完成审核。
 - **consult**：只回答形式、方法、前提、替代方案和结论边界，不强制生成文档。
 - **quick-ask**：最多确认一个最影响问法的条件，直接给问题和必要分支。
