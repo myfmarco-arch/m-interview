@@ -3,7 +3,7 @@ name: m-interview
 description: 设计、修改和审核定性研究的访谈简报与现场访谈大纲（访谈提纲、深访大纲、座谈会提纲、专家访谈提纲）。覆盖用户深访、专家访谈和座谈会，支持定向案头调研与中文默认产品。不用于转写、访谈分析、招募问卷或实时主持。
 license: MIT
 metadata:
-  version: 0.4.0
+  version: 0.4.1
   contract: m-interview-contract-v1
 ---
 
@@ -50,7 +50,7 @@ metadata:
 - [工作流](references/products/interview-zh-default/workflow.md)：题量、追问密度和时间。
 - [简报模板](references/products/interview-zh-default/brief-template.md) 和 [大纲模板](references/products/interview-zh-default/guide-template.md)。
 
-简报、现场大纲和案头调研不设页数，只写研究和执行必需的内容。题量和追问按时长定：深访每个核心主问题约 7–15 分钟，追问约每 1.5 分钟一行；座谈会的轮流题按人数计时。必问/可删和删减顺序写在简报，不进大纲。
+必问/可删和删减顺序写在简报，不进大纲。
 
 ### 5. 验证与交付
 

@@ -5,21 +5,20 @@ M-interview 是中文定性研究访谈设计 Skill。它从研究目标和业�
 ## 支持的工作
 
 - 用户深访、专家访谈和座谈会。
-- 研究简报、现场手卡和独立的访前案头调研。
-- 可选的定向访前案头调研。
+- 访谈简报、现场访谈大纲和按需的定向访前案头调研。
 - 访谈大纲审核、修改、快速提问和方法咨询。
 - 中文默认产品，以及通过 overlay 替换团队的写作、格式和附加验证。
 
 ## 兼容性状态
 
-当前 `0.4.0` 不声明合同兼容性。`contracts/manifest.json` 锁定当前合同 revision；修改合同、验证规则或 conformance 用例后，必须重新评测。
+当前 `0.4.1` 不声明合同兼容性。`contracts/manifest.json` 锁定当前合同 revision；修改合同、验证规则或 conformance 用例后，必须重新评测。
 
-现有方法卡已按场景拆分，但仍标记为 legacy 方法参考。它们可以支持研究设计，暂不声明完整的模块合同兼容性；新增或升级的方法卡必须遵守模块合同并通过 modules 评测。
+现有方法卡还没有按模块合同的十个章节改写，暂不声明模块合同兼容性；新增或升级的方法卡必须遵守模块合同并通过 modules 评测。
 
 ## 目录
 
 ```text
-M-interview/
+m-interview/
 ├── SKILL.md
 ├── product.yaml
 ├── contracts/
@@ -34,7 +33,7 @@ M-interview/
 └── docs/ARCHITECTURE.md
 ```
 
-目录名按项目约定使用 `M-interview`；Skill 标识为规范化的小写 `m-interview`，与 M-survey 的安装约定一致。
+安装时目录名必须是 `m-interview`，与 `SKILL.md` 中的 `name` 一致。
 
 ## 检查
 

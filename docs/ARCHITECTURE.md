@@ -42,4 +42,4 @@ GuideSpec 是生成前的内部语义对象，不默认单独交付。Markdown �
 
 `conformance` 评测检查所有产品必须保留的研究判断；`modules` 检查方法和服务；`product` 检查中文默认产品；`overlay` 检查团队覆盖。修改合同、验证规则或 conformance 用例时，必须更新合同 revision 和 manifest。
 
-当前 0.3.0 不声明行为兼容性。结构检查通过不等于真实模型评测通过。`lint_guide.py` 的问法检查是启发式的，只用来提示可疑行。
+当前版本不声明行为兼容性。结构检查通过不等于真实模型评测通过。

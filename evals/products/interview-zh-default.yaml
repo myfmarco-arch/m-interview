@@ -16,7 +16,7 @@ cases:
   - id: default-guide-format
     kind: positive
     blocking: true
-    targets: [format.time-range, format.question-count, format.guide-hand-card, format.guide-required, format.guide-minimal]
+    targets: [format.time-range, format.question-count, format.guide-required, format.guide-minimal]
     request: "60 分钟中文用户深访，访谈最近购买过手机的用户，了解最近一次购买手机的决策过程。全程录音，仅用于内部产品研究，报告匿名。生成现场大纲。"
     expected:
       - 模块标题带时间范围

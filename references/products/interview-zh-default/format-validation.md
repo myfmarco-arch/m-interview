@@ -10,7 +10,7 @@
 | `format.guide-minimal` | 大纲只保留主持人要说、要问或必须据此转向的内容；必问/可删和删减顺序放在简报 | warning |
 | `format.guide-closing` | 大纲包含未覆盖内容、受访者提问和停止记录提示；有已确认的后续安排时再说明 | warning |
 | `format.time-range` | 模块标题写时长，如“## 二、换机过程（15mins）”；各模块时长合计不超过总时长 | warning |
-| `format.question-count` | 核心主问题数量符合 profile 的每题分钟数；每模块通常 1–2 个主问题，最多 3 个；每个主问题 3–5 条一级追问，可再挂一层再追问；需要比较时加 1 条提示清单；每个核心模块的追问行数不少于“模块分钟数 ÷ 1.5”，至少 3 行；分支不计入，每题最多 1 个。座谈会表头写每场人数；轮流题按“人数 × 每人发言时间”计时，只配 2–3 条针对个别人的追问，不计入追问密度 | warning |
+| `format.question-count` | 核心主问题数量、每题追问、追问密度、分支和座谈会轮流题计时符合 [工作流](workflow.md) 的内容预算 | warning |
 | `format.numbering` | 主问题用不重复的【短标签】标识；如果改用数字编号，全篇连续 | warning |
 | `format.natural-wording` | 问题读出来像主持人说话：没有书面腔、AI 腔和客服腔；主问题一口气能读完 | warning |
 | `format.naming` | 文件名使用日期、项目简称、文档类型和两位版本号 | warning |
