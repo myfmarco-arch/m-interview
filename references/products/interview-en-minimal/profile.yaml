@@ -1,7 +1,7 @@
 schema_version: 2
 id: interview-en-minimal
 language: en-US
-version: 0.4.3
+version: 0.5.0
 labels:
   brief: Interview brief
   guide: Moderator guide

@@ -2,5 +2,6 @@
 
 | rule_id | 检查 | severity |
 |---|---|---|
-| `question.expert-grounded` | 专家概念判断至少追到案例、过程、依据、边界或取舍之一 | warning |
-| `ethics.expert-confidential` | 外部专家（在职、前雇员或独立专家）的身份、立场和匿名边界已确认；敏感内容可只说范围或跳过 | error |
+| `design.expert-purpose` | 简报写明一个主用途（学做法、拼规划、看格局、评技术、验假设或内部对齐），模块顺序和追问方向按这个用途；请求里看不出用途时，首轮先问 | error |
+| `question.expert-grounded` | 专家的重要判断按用途追到证据：学做法追案例和过程；拼规划和看格局追迹象、来源、把握和时间；评技术追指标和瓶颈；验假设追反例和成立条件 | warning |
+| `ethics.expert-confidential` | 不设计索取对方现任或前任雇主非公开机密的问题：未发布产品的具体规格和日期、内部财务和合同数字、代码和内部文件；需要时改问方向、排序、区间、依赖和判断依据 | error |

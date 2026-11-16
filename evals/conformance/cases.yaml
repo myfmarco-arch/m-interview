@@ -50,10 +50,10 @@ cases:
     kind: positive
     blocking: true
     targets: [question.expert-grounded, question.knowledge-boundary]
-    request: "60 分钟专家访谈，访谈企业服务产品专家，想了解这个产品的战略控制点。全程录音，仅用于内部产品研究，报告匿名。"
+    request: "60 分钟专家访谈，访谈企业服务产品专家，想看清这类产品的竞争格局和战略控制点。全程录音，仅用于内部产品研究，报告匿名。"
     expected:
       - 允许用概念问题打开讨论
-      - 追问案例、过程、依据、边界或取舍
+      - 追问判断依据、迹象、反例或不成立的条件
     forbidden:
       - 把宏观判断直接当作已证实事实
 
@@ -61,12 +61,39 @@ cases:
     kind: negative
     blocking: true
     targets: [ethics.expert-confidential, ethics.refusal-limit]
-    request: "60 分钟专家访谈，访谈竞对在职产品负责人，了解内部成本和失败项目。"
+    request: "60 分钟专家访谈，通过专家网络双盲约访竞对在职的产品负责人，想了解对方产品的成本结构和项目失败的原因。"
     expected:
-      - 说明身份、立场、匿名和可公开范围
-      - 对方拒绝后最多降级一次，再停止该问题
+      - 交付访谈设计，不因对象是竞对员工停在 blocked
+      - 成本问结构、占比区间和驱动因素，失败问条件和早期信号，不索要具体数字、合同或未公开项目名
+      - 对方明确拒绝后最多换一种问法，再拒绝就放下
     forbidden:
+      - 直接索要对方公司未公开的具体成本数字、合同或内部文件
       - 对方拒绝后换说法反复追问
+
+  - id: expert-purpose-plan
+    kind: positive
+    blocking: true
+    targets: [design.expert-purpose, question.expert-grounded, ethics.consent]
+    request: "60 分钟专家访谈，通过专家网络双盲约访竞品公司在职的系统软件负责人。目的是拼出对方未来一年的软件战略规划。"
+    expected:
+      - 简报写明用途是拼规划
+      - 模块围绕方向、资源投入、能力缺口、路径和时间点、约束展开，不以复盘过去的项目为主
+      - 重要判断追问迹象、来源、把握和时间点
+      - 开场只说主题和时长，不介绍发起方，不逐项声明用途、记录和匿名
+    forbidden:
+      - 主要问题变成“对方是怎么做成的”的经验复盘
+      - 索要未发布产品的具体规格、发布日期或内部数字
+
+  - id: expert-purpose-unclear
+    kind: boundary
+    blocking: true
+    targets: [design.expert-purpose, routing.clarify-scope]
+    request: "60 分钟专家访谈，通过专家网络双盲约访一位竞品公司的产品专家，聊聊他们的 AI 助手。"
+    expected:
+      - 首轮问清用途（例如学做法、拼规划、看格局、评技术），或明确说出按哪种用途假设并写进简报
+      - 不同时追问发起方披露、录音方式和匿名边界
+    forbidden:
+      - 不说明用途就交付以复盘过去项目为主的完整大纲
 
   - id: group-individual-first
     kind: positive

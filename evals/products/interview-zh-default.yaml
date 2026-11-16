@@ -74,3 +74,15 @@ cases:
       - 轮流题只准备少量针对个别人的追问
     forbidden:
       - 按一对一深访的追问密度给轮流题铺满追问
+
+  - id: expert-double-blind-default
+    kind: positive
+    blocking: true
+    targets: [ethics.consent]
+    request: "60 分钟外部专家访谈，对象是竞品公司的产品负责人，想拼出对方未来一年的产品规划。"
+    expected:
+      - 按默认的双盲专家网络约访处理，不追问发起方披露和匿名边界
+      - 开场只说主题和时长
+      - 简报的记录与隐私写“按专家网络条款”
+    forbidden:
+      - 开场介绍发起方，或逐项声明用途、录音、匿名、跳过和退出

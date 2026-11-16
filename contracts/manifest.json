@@ -1,6 +1,6 @@
 {
   "contract": "m-interview-contract-v1",
-  "revision": "2026-11-16.8",
+  "revision": "2026-11-16.9",
   "declaring_compatibility": null,
   "note": "合同、官方验证规则或 conformance 用例变化后运行 python scripts/contract_manifest.py write。",
   "files": {
@@ -8,12 +8,12 @@
     "contracts/module-contract.md": "75724fca1c56cc4642541888f442a754f69c57770676b2dc2410428b4d84829a",
     "contracts/validation-contract.md": "a91aaa4c3c3ca89a5099ef51165099a6f864226888057e0aa3d219234b8d2d43",
     "contracts/overlay-contract.md": "138d3f006f5dba968abde4f37ca4c787df4ce55f170b4426b088a000456d63db",
-    "references/services/validation/core.md": "3621193c00f20aa73d3a1c97fc80df082ca87ed731ad3c447ea639ab2581651d",
-    "references/services/validation/expert.md": "5cb317c767000762f5df42d7eb479276f9a29498fd9570cc9b33df1a9d8236a6",
+    "references/services/validation/core.md": "f152a2927b9c7d61e9fe4896648a7e98fec0007616f7bb6c9e74a57d6e10554d",
+    "references/services/validation/expert.md": "274e632cfce3c886719a1c6c75efa8f6a75758a1847064ec6c0e2569b5af7c26",
     "references/services/validation/user-depth.md": "88dd565732c2c6fa8dc3af6bade952e9ffc2e6d5052d647d7f67a5968a3bb257",
     "references/services/validation/focus-group.md": "532c8480840bcb2e70252cd6b8653cfd5c5a1d89e75a19e07cca552d4e1d5b57",
     "references/services/validation/desk-research.md": "f22f05b952f0ef28bdc5a3014cac5c11bae5b6f418f819aeaf37c41c7f112354",
-    "evals/conformance/cases.yaml": "5d6dbce754f923a84348a301d8440cec4e6b52a8058f16561fe04972227602b5",
+    "evals/conformance/cases.yaml": "1e86d1ea5b79b8759b349857028bee90055819ff1ff2701b53c2f2cdace4b20e",
     "evals/scoring.md": "5680a196d69388ff326f0ec78256cb56803cf41cd1c4b14f407b0f9a8f0a17e0"
   }
 }
