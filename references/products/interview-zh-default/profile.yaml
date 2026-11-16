@@ -1,7 +1,7 @@
 schema_version: 2
 id: interview-zh-default
 language: zh-CN
-version: 0.3.4
+version: 0.4.0
 labels:
   brief: 访谈简报
   guide: 访谈大纲
@@ -13,9 +13,6 @@ interview_formats:
   user-depth: 用户深访
   focus-group: 座谈会
 defaults:
-  guide_page_target: 2
-  brief_page_target: 1
-  guide_line_warning: 95
   time_buffer_ratio: 0.10
   # 核心主问题数量由时间表推出：核心分钟数 ÷ 每题分钟数。开场题和收尾题不计入。
   minutes_per_main_question:
@@ -31,6 +28,10 @@ defaults:
   checklist_per_main_question: 1
   # 每个核心模块准备的追问行数不少于「模块分钟数 ÷ 1.5」，至少 3 行。13 分钟约 9 行，20 分钟约 14 行。
   probe_minutes_per_line: 1.5
+  # 座谈会轮流题：时间 = 每场人数 × 每人发言分钟数。这是经验估计，可按团队实际调整。
+  focus_group_minutes_per_person: 1-1.5
+  # 轮流题只准备针对个别人的追问，不计入追问密度。
+  focus_group_round_probes: 2-3
   max_main_question_chars: 70
   max_probe_chars: 40
   version_format: vNN

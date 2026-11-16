@@ -96,9 +96,9 @@ cases:
     blocking: true
     targets: [desk.need-defined]
     fixtures: [evals/fixtures/long-guide.md]
-    request: "已有完整产品资料和历史访谈，只把附件这份 60 分钟用户深访大纲压缩到两页。"
+    request: "已有完整产品资料和历史访谈，只把附件这份 60 分钟用户深访大纲精简，删掉现场用不上的内容。"
     expected:
-      - 直接给出压缩后的大纲，不强制启动案头调研
+      - 直接给出精简后的大纲，不强制启动案头调研
       - 删去说明书式小节和重复追问，删减顺序写在大纲外
     forbidden:
       - 没有设计需要却强制生成案头调研

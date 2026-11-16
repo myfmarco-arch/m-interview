@@ -27,17 +27,17 @@ class ScriptTests(unittest.TestCase):
             result = run(str(LINT), str(brief), str(guide))
             self.assertEqual(result.returncode, 1)
             self.assertIn("guide.no-placeholder", result.stdout)
-            self.assertIn("format.guide-hand-card", result.stdout)
+            self.assertIn("warning [format.guide-minimal]", result.stdout)
 
-    def test_lint_warns_on_long_guide(self):
+    def test_lint_has_no_page_or_line_limit(self):
         with tempfile.TemporaryDirectory() as directory:
             brief = Path(directory) / "brief.md"
             guide = Path(directory) / "guide.md"
             brief.write_text("SRQ 研究性质 方法 同意 录音 时间", encoding="utf-8")
-            guide.write_text("收尾\n" + "问题\n" * 101, encoding="utf-8")
+            guide.write_text("收尾\n" + "问题\n" * 200, encoding="utf-8")
             result = run(str(LINT), str(brief), str(guide))
             self.assertEqual(result.returncode, 0)
-            self.assertIn("format.guide-length", result.stdout)
+            self.assertNotIn("format.guide-length", result.stdout)
 
     def test_lint_catches_time_overflow(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -66,8 +66,8 @@ class ScriptTests(unittest.TestCase):
             brief.write_text("SRQ 研究性质 方法 同意 录音 时间", encoding="utf-8")
             guide.write_text("## 收尾（第 50–60 分钟）\n下面是整理后的版本\n1. **还有什么重要内容没有谈到？**", encoding="utf-8")
             result = run(str(LINT), str(brief), str(guide))
-            self.assertEqual(result.returncode, 1)
-            self.assertIn("format.guide-minimal", result.stdout)
+            self.assertEqual(result.returncode, 0)
+            self.assertIn("warning [format.guide-minimal]", result.stdout)
 
     def test_lint_warns_on_three_main_questions(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -194,6 +194,53 @@ class ScriptTests(unittest.TestCase):
         for rel in ("references/products/interview-zh-default", "references/products/interview-en-minimal"):
             result = run(str(LINT), str(ROOT / rel / "brief-template.md"), str(ROOT / rel / "guide-template.md"), "--template")
             self.assertEqual(result.returncode, 0, result.stdout)
+
+
+    def test_lint_main_question_pairing(self):
+        def guide(main):
+            return (
+                "用户深访｜30mins｜用户｜v01\n## 一、开场热身（5mins）\n- 您好。\n"
+                f"## 二、使用情况（20mins）\n#### 【最近一次】{main}\n"
+                + "".join(f"- 追问{n}怎么处理的？\n" for n in range(14)) +
+                "## 三、总结（5mins）\n- 还有什么我们没聊到的？\n"
+            )
+        allowed = self.lint_guide(guide("最近一次用负一屏是什么时候？当时是什么情况？"))
+        self.assertNotIn("question.single-task", allowed.stdout)
+        unrelated = self.lint_guide(guide("最近一次用负一屏是什么时候？您觉得它好用吗？"))
+        self.assertIn("question.single-task", unrelated.stdout)
+
+    def focus_group(self, header, module):
+        return (
+            f"{header}\n## 一、开场热身（10mins）\n- 各位好。\n"
+            f"{module}"
+            "## 三、总结（5mins）\n- 还有什么我们没聊到的？\n"
+        )
+
+    def test_lint_focus_group_round_time(self):
+        module = (
+            "## 二、各自情况（20mins）\n"
+            "#### 【最近一次】请讲讲最近一次在家用智能设备的情况。（轮流）\n- 当时家里还有谁在？\n- 后来怎么处理的？\n"
+            "#### 【控制方式】平时都是怎么控制这些设备的？（轮流）\n- 哪样最常用？\n"
+            "#### 【设备由来】家里第一样设备是怎么来的？（轮流）\n- 当时是谁决定的？\n"
+        )
+        result = self.lint_guide(self.focus_group("座谈会｜90mins｜8人｜用户｜v01", module))
+        self.assertIn("round questions; with 8 people", result.stdout)
+        self.assertNotIn("prepares only", result.stdout)
+
+    def test_lint_focus_group_round_probes(self):
+        module = (
+            "## 二、各自情况（20mins）\n"
+            "#### 【最近一次】请讲讲最近一次在家用智能设备的情况。（轮流）\n"
+            + "".join(f"- 追问{n}是什么情况？\n" for n in range(6))
+        )
+        result = self.lint_guide(self.focus_group("座谈会｜90mins｜6人｜用户｜v01", module))
+        self.assertIn("round question", result.stdout)
+        self.assertIn("at most 3", result.stdout)
+
+    def test_lint_focus_group_needs_participant_count(self):
+        module = "## 二、各自情况（20mins）\n#### 【最近一次】请讲讲最近一次的情况。（轮流）\n- 当时怎么处理的？\n"
+        result = self.lint_guide(self.focus_group("座谈会｜90mins｜用户｜v01", module))
+        self.assertIn("no participant count", result.stdout)
 
 
 if __name__ == "__main__":

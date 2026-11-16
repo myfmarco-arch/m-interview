@@ -1,7 +1,7 @@
 schema_version: 2
 id: interview-en-minimal
 language: en-US
-version: 0.3.4
+version: 0.4.0
 labels:
   brief: Interview brief
   guide: Moderator guide
@@ -11,9 +11,6 @@ interview_formats:
   user-depth: User depth interview
   focus-group: Focus group
 defaults:
-  guide_page_target: 2
-  brief_page_target: 1
-  guide_line_warning: 95
   time_buffer_ratio: 0.10
   # Core main questions = core minutes / minutes per question. Opening and closing questions do not count.
   minutes_per_main_question:
@@ -28,6 +25,10 @@ defaults:
   checklist_per_main_question: 1
   # Each core module prepares at least ceil(minutes / 1.5) probe lines, minimum 3.
   probe_minutes_per_line: 1.5
+  # Focus group round questions: time = participants × minutes per person. An estimate; adjust to team practice.
+  focus_group_minutes_per_person: 1-1.5
+  # Round questions get only a few probes aimed at individuals; they do not count toward probe density.
+  focus_group_round_probes: 2-3
 voice:
   address: you
   tone: concise, direct, natural spoken language

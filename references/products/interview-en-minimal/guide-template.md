@@ -1,6 +1,6 @@
 # [Project] moderator guide
 
-[Format] | [ ] minutes | [Participant] | vNN | YYYY-MM-DD
+[Format] | [ ] minutes | [Focus groups: number of participants] | [Participant] | vNN | YYYY-MM-DD
 
 ## Opening (minutes [start]-[end])
 

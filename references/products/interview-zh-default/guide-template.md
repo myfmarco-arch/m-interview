@@ -2,7 +2,7 @@
 
 默认文件名：`YYYY-MM-DD_项目简称_访谈大纲_vNN.md`
 
-[形式]｜[ ]mins｜[对象]｜vNN｜YYYY-MM-DD
+[形式]｜[ ]mins｜[座谈会：每场人数]｜[对象]｜vNN｜YYYY-MM-DD
 
 ## 一、开场热身（[ ]mins）
 

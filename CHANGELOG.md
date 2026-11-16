@@ -2,6 +2,24 @@
 
 版本号遵循语义化版本。0.x 期间合同仍可能调整；合同变化必须写明迁移影响。
 
+## [0.4.0] - 2026-11-16
+
+### 变更
+- **取消页数目标。** 简报、现场大纲和案头调研不再写“约一页”“不超过两页”，改为只写研究和执行必需的内容。删除 `format.guide-length`、profile 的 `guide_page_target`、`brief_page_target`、`guide_line_warning`，以及 lint 的行数检查。
+- **error 只留给不可例外、能客观判定的规则。** error 从 23 条减到 16 条。降为 warning 的有：`question.single-task`、`question.no-leading`、`question.no-hypothetical`、`question.non-use-path`、`format.brief-required`、`format.guide-required`、`format.guide-closing`。问法类 warning 在生成时由模型直接改掉，审核时照常列出。`ethics.consent` 补上“有记录时，收尾说明停止记录”，原来这一项只在 `format.guide-closing` 里。
+- **主问题允许的连问。** 只允许“时间或事件锚点 + 开放叙述”，两句必须指同一件事，例如“最近一次是什么时候？当时是什么情况？”。回忆和评价、两个对象、互不相关的问题要拆开。lint 对主问题里其他形式的两问给出提示。
+- **座谈会按人数计时。** 大纲表头写每场人数。标“（轮流）”的题按“人数 × 每人 1–1.5 分钟”计时，只准备 2–3 条针对个别人的追问，不计入追问密度。每人分钟数是经验估计，写在 profile 的 `focus_group_minutes_per_person`，可按团队实际调整。lint 检查轮流题时间是否超出模块时长、轮流题追问是否过多、表头是否写了人数。
+- **lint 的报告级别跟规则表一致。** `format.brief-required`、`format.guide-closing`、`format.guide-minimal` 改报 warning，不再让 lint 返回失败；原来未定义的 `format.guide-hand-card` 并入 `format.guide-minimal`。lint 只对 error 级规则（占位符、时间超出）返回失败。
+
+### 评测
+- `desk-not-required` 的请求从“压缩到两页”改为“精简，删掉现场用不上的内容”。
+- modules 用例 `guide-length` 改名为 `guide-concise`，去掉“一页到两页手卡”。
+- product 组新增 `focus-group-round-timing`。
+
+### 迁移影响
+- 验证规则的严重程度属于合同，revision 前移。之前的运行结果不能代表 0.4.0。
+- 旧的座谈会大纲表头没有人数时，lint 会提示 `format.question-count`。
+
 ## [0.3.4] - 2026-11-16
 
 ### 修正（来自 2026-11-16 预跑评测，见 `evals/runs/2026-11-16-claude-opus-n1/manual-review.md`）

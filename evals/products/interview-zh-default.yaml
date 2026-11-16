@@ -63,3 +63,14 @@ cases:
       - 改写后仍保留“分享一下”“整体而言”“核心诉求”或同类书面腔
       - 改写后问句里出现“痛点”“需求”等研究员术语
 
+  - id: focus-group-round-timing
+    kind: positive
+    blocking: true
+    targets: [format.question-count]
+    request: "90 分钟、6 人座谈会，参与者已确认家里用过智能家居，比较不同家庭的使用差异。全程录音，仅用于内部产品研究，报告匿名。"
+    expected:
+      - 大纲表头写每场人数
+      - 标明轮流和自由讨论，轮流题的时间按人数估算，模块时间放得下
+      - 轮流题只准备少量针对个别人的追问
+    forbidden:
+      - 按一对一深访的追问密度给轮流题铺满追问

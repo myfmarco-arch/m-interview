@@ -64,6 +64,14 @@ RANGE_RE = re.compile(r"第\s*(\d+)\s*[–—-]\s*(\d+)\s*分钟|minutes?\s*(\d+
 # 团队格式：## 二、换机过程（13mins） / (5min) / （10分钟） / （30-40 min）。区间取下限。
 DURATION_RE = re.compile(r"[（(]\s*(\d+)\s*(?:[-–—~]\s*(\d+))?\s*(?:mins?|分钟)\s*[）)]", re.IGNORECASE)
 BRANCH_TAG = re.compile(r"^\[[^\]\n]{1,30}\][：:]\s*|^(?:若|如果|If)[^：:]{0,30}[：:]\s*")
+# 主问题里唯一允许的连问：时间或事件锚点 + 指同一件事的开放叙述。
+NARRATIVE_FOLLOW = re.compile(
+    r"^(?:当时|那次|那时|后来)?(?:是)?(?:什么情况|发生了什么|怎么回事|是怎么.{0,8}的|从头|讲讲|说说|经过)"
+    r"|^(?:what happened|what was going on|tell me|walk me)",
+    re.IGNORECASE,
+)
+ROUND_RE = re.compile(r"[（(]\s*(?:轮流|round)", re.IGNORECASE)
+PARTICIPANTS_RE = re.compile(r"(\d+)\s*(?:人|位|participants|people)\b|(\d+)\s*人", re.IGNORECASE)
 OPENING_WORDS = ("开场", "热身", "Opening")
 CLOSING_WORDS = ("收尾", "总结", "补充问题", "Closing")
 
@@ -75,23 +83,28 @@ def read(path: str) -> str:
 def load_profile(path: Path) -> dict:
     """Read the few numeric defaults lint needs without a YAML dependency."""
     profile = {
-        "guide_line_warning": 95,
         "max_main_questions_per_module": 3,
         "max_probes_per_main_question": 8,
         "probe_minutes_per_line": 1.5,
         "max_main_question_chars": 70,
         "max_probe_chars": 40,
         "minutes": {"user-depth": (7, 15), "expert": (7, 15), "focus-group": (10, 20)},
+        "focus_group_minutes_per_person": (1.0, 1.5),
+        "focus_group_round_probes": (2, 3),
     }
     if not path.exists():
         return profile
     text = path.read_text(encoding="utf-8")
-    for key in ("guide_line_warning", "max_main_questions_per_module", "max_probes_per_main_question",
+    for key in ("max_main_questions_per_module", "max_probes_per_main_question",
                 "probe_minutes_per_line", "max_main_question_chars", "max_probe_chars"):
         match = re.search(rf"^\s+{key}:\s*(\d+(?:\.\d+)?)\s*$", text, flags=re.MULTILINE)
         if match:
             value = float(match.group(1))
             profile[key] = int(value) if value.is_integer() else value
+    for key, cast in (("focus_group_minutes_per_person", float), ("focus_group_round_probes", int)):
+        match = re.search(rf"^\s+{key}:\s*(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\s*$", text, flags=re.MULTILINE)
+        if match:
+            profile[key] = (cast(float(match.group(1))), cast(float(match.group(2))))
     block = re.search(r"^\s+minutes_per_main_question:\s*\n((?:\s{4,}[a-z-]+:\s*\d+-\d+\s*\n)+)", text, flags=re.MULTILINE)
     if block:
         for name, low, high in re.findall(r"([a-z-]+):\s*(\d+)-(\d+)", block.group(1)):
@@ -122,7 +135,7 @@ def check_brief(text: str, errors: list, warnings: list) -> None:
     )
     for alternatives in required:
         if not any(item in text for item in alternatives):
-            errors.append(("format.brief-required", f"brief: missing one of {' / '.join(alternatives)}"))
+            warnings.append(("format.brief-required", f"brief: missing one of {' / '.join(alternatives)}"))
     table_headers = [line for line in text.splitlines() if line.strip().startswith("|") and "SRQ" in line]
     if "SRQ" in text and not table_headers:
         warnings.append(("design.srq-coverage", "brief: no table maps modules or methods to SRQ"))
@@ -168,6 +181,10 @@ def check_wording(number: int, raw: str, role: str, profile: dict, warnings: lis
     marks = text.count("？") + text.count("?")
     if marks > 2:
         warnings.append(("question.single-task", f"guide {snippet} (more than two questions in one line)"))
+    elif role == "main" and marks == 2:
+        parts = [part.strip() for part in re.split(r"[？?]", text) if part.strip()]
+        if len(parts) >= 2 and not NARRATIVE_FOLLOW.search(parts[1]):
+            warnings.append(("question.single-task", f"guide {snippet} (two questions in a main question; only an anchor plus an open narrative about the same event is allowed)"))
     for phrase in AI_PHRASES:
         if phrase.lower() in text.lower():
             warnings.append(("format.natural-wording", f"guide {snippet} (written or chatbot phrasing: '{phrase}')"))
@@ -198,17 +215,21 @@ def check_wording(number: int, raw: str, role: str, profile: dict, warnings: lis
         warnings.append(("format.natural-wording", f"guide {snippet} (probe longer than {profile['max_probe_chars']} characters)"))
 
 
+def check_round_probes(section: dict, is_round: bool, probes: int, profile: dict, number, warnings: list) -> None:
+    """Round questions in a focus group get only a few probes aimed at individuals."""
+    if not is_round or section.get("kind") != "core":
+        return
+    limit = profile["focus_group_round_probes"][1]
+    if probes > limit:
+        where = f"before line {number}" if number else f"at the end of '{section['title']}'"
+        warnings.append(("format.question-count", f"guide: round question {where} has {probes} probe lines; prepare at most {limit} aimed at individuals"))
+
+
 def check_guide(text: str, errors: list, warnings: list, profile: dict, allow_template: bool = False, draft: bool = False) -> None:
     text = re.sub(r"<!--.*?-->", "", text, flags=re.S)
     lines = text.splitlines()
-    if len(lines) > 120:
-        warnings.append(("format.guide-length", "guide: over 120 lines; this will not fit on two pages"))
-    header_duration = find_duration(text, "\n".join(lines[:6]))
-    line_budget = profile["guide_line_warning"] * max(1.0, (header_duration or 60) / 60)
-    if len(lines) > line_budget:
-        warnings.append(("format.guide-length", "guide: over the concise content budget; remove nonessential text before layout compression"))
     if not any(word in text for word in CLOSING_WORDS):
-        errors.append(("format.guide-closing", "guide: missing a closing module (收尾 / 总结)"))
+        warnings.append(("format.guide-closing", "guide: missing a closing module (收尾 / 总结)"))
     for marker in PLACEHOLDERS:
         if marker in text:
             errors.append(("guide.no-placeholder", f"guide: unresolved internal marker '{marker}'"))
@@ -218,13 +239,13 @@ def check_guide(text: str, errors: list, warnings: list, profile: dict, allow_te
             errors.append(("guide.no-placeholder", f"guide: unresolved placeholders: {', '.join(bracket_tokens[:4])}"))
     for marker in PROCESS_MARKERS:
         if marker in text:
-            errors.append(("format.guide-minimal", f"guide: process text '{marker}' does not belong in the field guide"))
+            warnings.append(("format.guide-minimal", f"guide: process text '{marker}' does not belong in the field guide"))
 
     sections = split_sections(lines)
     header = "\n".join(line for _, line in sections[0]["lines"])
     headings = {m.group(1).strip() for m in re.finditer(r"^#{1,6}\s+(.+?)\s*$", text, flags=re.MULTILINE)}
     for heading in sorted(headings & FORBIDDEN_GUIDE_SECTIONS):
-        errors.append(("format.guide-hand-card", f"guide: '{heading}' belongs in the brief"))
+        warnings.append(("format.guide-minimal", f"guide: '{heading}' belongs in the brief"))
 
     slots = [(section["kind"], number) for section in sections for number, line in section["lines"] if DRAFT_SLOT.search(line)]
     if slots and not draft:
@@ -235,6 +256,13 @@ def check_guide(text: str, errors: list, warnings: list, profile: dict, allow_te
 
     duration = find_duration(text, header)
     interview_format = detect_format(header)
+    participants = None
+    if interview_format == "focus-group":
+        match = PARTICIPANTS_RE.search(header)
+        if match:
+            participants = int(match.group(1) or match.group(2))
+        elif not allow_template:
+            warnings.append(("format.question-count", "guide: focus group header has no participant count (e.g. '6人'); round-question time was not checked"))
     ranges = []
     durations = []
     for section in sections[1:]:
@@ -276,6 +304,8 @@ def check_guide(text: str, errors: list, warnings: list, profile: dict, allow_te
         mains = 0
         probes_for_current = 0
         base_indent = None
+        current_round = False
+        round_probes = 0
         for number, line in section["lines"]:
             main = MAIN_RE.match(line)
             heading = HEADING_RE.match(line)
@@ -291,6 +321,11 @@ def check_guide(text: str, errors: list, warnings: list, profile: dict, allow_te
                 else:
                     continue
             if main_text is not None:
+                check_round_probes(section, current_round, round_probes, profile, number, warnings)
+                current_round = interview_format == "focus-group" and bool(ROUND_RE.search(main_text))
+                round_probes = 0
+                if current_round and section["kind"] == "core":
+                    section["round_questions"] = section.get("round_questions", 0) + 1
                 if probes_for_current > profile["max_probes_per_main_question"]:
                     warnings.append(("format.question-count", f"guide: question before line {number} has {probes_for_current} first-level probes; maximum is {profile['max_probes_per_main_question']}"))
                 probes_for_current = 0
@@ -302,18 +337,27 @@ def check_guide(text: str, errors: list, warnings: list, profile: dict, allow_te
                 if base_indent is None:
                     base_indent = indent
                 section["probe_lines"] = section.get("probe_lines", 0) + 1
+                is_branch = indent <= base_indent and bool(BRANCH_TAG.match(probe.group(2).strip()))
+                if current_round:
+                    section["round_probe_lines"] = section.get("round_probe_lines", 0) + 1
+                    if not is_branch:
+                        round_probes += 1
                 if indent > base_indent:
                     section["sub_probes"] = section.get("sub_probes", 0) + 1
-                elif not BRANCH_TAG.match(probe.group(2).strip()):
+                elif not is_branch:
                     probes_for_current += 1
                     section["top_probes"] = section.get("top_probes", 0) + 1
+                    if current_round:
+                        section["round_top_probes"] = section.get("round_top_probes", 0) + 1
                 check_wording(number, probe.group(2), "probe", profile, warnings)
             elif probe:
                 check_wording(number, probe.group(2), "edge", profile, warnings)
             elif line.strip().startswith(">"):
                 check_wording(number, line.strip().lstrip(">").strip(), "script", profile, warnings)
+        check_round_probes(section, current_round, round_probes, profile, None, warnings)
         if probes_for_current > profile["max_probes_per_main_question"]:
             warnings.append(("format.question-count", f"guide: last question in '{section['title']}' has {probes_for_current} first-level probes; maximum is {profile['max_probes_per_main_question']}"))
+        section["mains"] = mains
         if section["kind"] == "core":
             core_questions += mains
             core_minutes += section.get("minutes", 0)
@@ -323,17 +367,32 @@ def check_guide(text: str, errors: list, warnings: list, profile: dict, allow_te
             warnings.append(("format.question-count", f"guide: {section['title']} has {mains} main questions; concise target is 1-2"))
 
     per_line = max(0.5, profile.get("probe_minutes_per_line", 1.5))
+    low_person, high_person = profile["focus_group_minutes_per_person"]
     for section in core_sections:
         minutes = section.get("minutes", 0)
         lines = section.get("probe_lines", 0)
         if not minutes:
             continue
+        rounds = section.get("round_questions", 0)
+        if rounds and participants:
+            need_low = rounds * participants * low_person
+            need_high = rounds * participants * high_person
+            if need_low > minutes:
+                warnings.append(("format.question-count", f"guide: '{section['title']}' has {rounds} round questions; with {participants} people they need about {need_low:g}-{need_high:g} minutes, more than the {minutes} minutes planned"))
+            # 轮流题的时间和追问不参与追问密度；只剩轮流题时不查密度。
+            if section.get("mains", 0) <= rounds:
+                continue
+            minutes = max(0, minutes - need_low)
+            lines -= section.get("round_probe_lines", 0)
+            section["top_probes"] = section.get("top_probes", 0) - section.get("round_top_probes", 0)
+            if not minutes:
+                continue
         needed = max(3, math.ceil(minutes / per_line))
         top = section.get("top_probes", 0)
         if lines < needed:
-            warnings.append(("format.question-count", f"guide: '{section['title']}' is {minutes} minutes but prepares only {lines} probe lines; at about {per_line} min per line it needs about {needed}"))
+            warnings.append(("format.question-count", f"guide: '{section['title']}' is {minutes:g} minutes{' outside round questions' if rounds and participants else ''} but prepares only {lines} probe lines; at about {per_line} min per line it needs about {needed}"))
         elif top > minutes:
-            warnings.append(("format.question-count", f"guide: '{section['title']}' has {top} first-level probes for {minutes} minutes; more branches than can be used"))
+            warnings.append(("format.question-count", f"guide: '{section['title']}' has {top} first-level probes for {minutes:g} minutes; more branches than can be used"))
 
     if core_minutes:
         low, high = profile["minutes"].get(interview_format, profile["minutes"]["user-depth"])
