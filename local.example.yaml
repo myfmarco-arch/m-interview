@@ -1,0 +1,19 @@
+# 本地覆盖示例。复制为仓库根目录的 local.yaml 后修改。
+schema_version: 1
+
+# product: my-interview-product
+# products:
+#   my-interview-product:
+#     profile: references/products/my-interview-product/profile.yaml
+#     workflow: references/products/my-interview-product/workflow.md
+#     writing: references/products/my-interview-product/writing.md
+#     brief_format: references/products/my-interview-product/brief-template.md
+#     guide_format: references/products/my-interview-product/guide-template.md
+
+overlays:
+  - references/overlays/example-custom/overlay.yaml
+
+# validation:
+#   add:
+#     - file: references/overlays/my-team/validation/team-checks.md
+#       trigger: 每次交付前

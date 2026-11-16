@@ -1,0 +1,285 @@
+version: 2
+suite: conformance
+contract: m-interview-contract-v1
+cases:
+  - id: blocking-info
+    kind: boundary
+    blocking: true
+    targets: [routing.blocking-info, routing.delivery-state]
+    request: "帮我写一份访谈大纲。"
+    expected:
+      - 在交付完整现场大纲前确认访谈类型、预计时长、受访对象与研究目标或业务决策
+      - 缺少阻断信息时只澄清或给出有限建议，不伪装成完整可执行大纲
+    forbidden:
+      - 在关键条件未知时直接交付完整现场大纲
+
+  - id: format-distinction
+    kind: positive
+    blocking: true
+    targets: [design.format-fit]
+    request: "60 分钟用户深访，访谈最近购买过手机的用户，了解最近一次购买决策过程。全程录音，仅用于内部产品研究，报告匿名。"
+    expected:
+      - 选择用户深访，并围绕个人购买经历设计问题
+      - 先问具体购买事件，再追问比较、取舍和决定
+    forbidden:
+      - 把用户深访写成专家访谈或座谈会流程
+
+  - id: focus-group-not-eight-depths
+    kind: boundary
+    blocking: true
+    targets: [design.format-fit, group.individual-first]
+    request: "90 分钟、8 人座谈会，参与者已确认最近购买过手机，想了解每个人完整的购买决策路径。全程录音，仅用于内部产品研究，报告匿名。"
+    expected:
+      - 说明座谈会不能替代 8 次个人深访
+      - 缩小目标到群体语言和差异，或建议改用用户深访
+    forbidden:
+      - 把 8 人座谈会当作 8 次独立深访
+
+  - id: non-use-path
+    kind: positive
+    blocking: true
+    targets: [question.non-use-path, question.experience-required]
+    request: "60 分钟用户深访，受访者已确认最近 3 个月每天使用手机但很少使用负一屏，想了解为什么。全程录音，仅用于内部产品研究，报告匿名。"
+    expected:
+      - 从相关任务和自然认知开始
+      - 包含提示后识别、尝试、停止、替代和重新采用条件
+    forbidden:
+      - 没用过就直接要求评价使用体验
+
+  - id: expert-concept-grounded
+    kind: positive
+    blocking: true
+    targets: [question.expert-grounded, question.knowledge-boundary]
+    request: "60 分钟专家访谈，访谈企业服务产品专家，想了解这个产品的战略控制点。全程录音，仅用于内部产品研究，报告匿名。"
+    expected:
+      - 允许用概念问题打开讨论
+      - 追问案例、过程、依据、边界或取舍
+    forbidden:
+      - 把宏观判断直接当作已证实事实
+
+  - id: expert-refusal
+    kind: negative
+    blocking: true
+    targets: [ethics.expert-confidential, ethics.refusal-limit]
+    request: "60 分钟专家访谈，访谈竞对在职产品负责人，了解内部成本和失败项目。"
+    expected:
+      - 说明身份、立场、匿名和可公开范围
+      - 对方拒绝后最多降级一次，再停止该问题
+    forbidden:
+      - 对方拒绝后换说法反复追问
+
+  - id: group-individual-first
+    kind: positive
+    blocking: true
+    targets: [group.individual-first, group.no-consensus-claim]
+    request: "90 分钟座谈会，参与者已确认使用过智能家居，比较不同用户的使用差异。全程录音，仅用于内部产品研究，报告匿名。"
+    expected:
+      - 先逐人独立表达，再进行群体比较
+      - 记录分歧和少数意见，不把多数意见写成共识
+    forbidden:
+      - 直接让参与者替研究员总结群体差异
+
+  - id: targeted-desk-research
+    kind: positive
+    blocking: true
+    targets: [desk.need-defined, desk.source-typed, evidence.desk-not-representative]
+    request: "60 分钟用户深访，访谈大折叠手机用户，了解购买决策和使用中的困难。全程录音，仅用于内部产品研究，报告匿名。请先了解产品和用户公开观点，再设计访谈。"
+    expected:
+      - 先按目标、人群、初步方法和 SRQ 定义案头调研信息需求
+      - 单独记录产品事实、用户公开表达、研究员解释和待验证问题
+      - 不把公开表达当作总体结论
+    forbidden:
+      - 先做无边界行业综述
+
+  - id: desk-not-required
+    kind: boundary
+    blocking: true
+    targets: [desk.need-defined]
+    fixtures: [evals/fixtures/compact-guide.md]
+    request: "已有完整产品资料和历史访谈，只把 60 分钟用户深访大纲压缩到两页。"
+    expected:
+      - 直接修改现有大纲，不强制启动案头调研
+      - 根据目标和时长给出删减顺序
+    forbidden:
+      - 没有设计需要却强制生成案头调研
+
+  - id: brief-and-hand-card
+    kind: positive
+    blocking: true
+    targets: [guide.no-placeholder]
+    request: "60 分钟用户深访大折叠手机用户，了解最近一次购买决策。全程录音，仅用于内部产品研究，报告匿名。请生成访谈简报和主持人现场大纲。"
+    expected:
+      - 将研究目标、方法、主持人注意和执行准备放在简报
+      - 现场大纲只保留时间、主问题、必要追问、必要分支和收尾
+    forbidden:
+      - 在现场大纲设置本模块目标、主持人注意或模块小结小节
+
+  - id: quick-ask
+    kind: boundary
+    blocking: true
+    targets: [routing.quick-ask]
+    request: "帮我想 5 个问题问用户为什么不用这个功能。"
+    expected:
+      - 最多确认一个会改变问法的条件后直接给出问题
+      - 不强制生成完整简报和大纲
+    forbidden:
+      - 先要求补齐三项以上信息
+
+  - id: no-prevalence
+    kind: negative
+    blocking: true
+    targets: [evidence.no-prevalence]
+    request: "正在设计访谈，想验证‘70% 的用户都在意续航’这个判断。访谈 10 个用户后，能不能把它作为总体结论？"
+    expected:
+      - 说明少量访谈不能推出总体比例
+      - 将判断改为本组受访者的叙述、差异和待验证假设
+    forbidden:
+      - 输出 70% 用户在意续航的结论
+
+  - id: no-unexperienced-rating
+    kind: negative
+    blocking: true
+    targets: [question.experience-required]
+    request: "没有用过这个功能的人，也请评价它是否好用。"
+    expected:
+      - 区分认知、理解、尝试意愿和实际使用体验
+      - 不要求没有经历的人评价实际操作
+    forbidden:
+      - 为未使用者生成实际使用满意度问题
+
+  - id: contradiction
+    kind: positive
+    blocking: false
+    targets: [question.contradiction]
+    request: "60 分钟用户深访中，用户前面说不在意品牌，后面又说在客户面前会换一台更好的手机。"
+    expected:
+      - 并列呈现两种说法，追问不同场景和触发条件
+      - 不要求受访者选择唯一真实答案
+    forbidden:
+      - 直接指责受访者前后矛盾
+
+  - id: guide-placeholder
+    kind: negative
+    blocking: true
+    targets: [guide.no-placeholder, ethics.no-invention]
+    fixtures: [evals/fixtures/guide-with-placeholders.md]
+    request: "这是一个 60 分钟用户深访大纲，访谈手机购买者，目标是了解最近一次购买决策。请把附件整理成可以直接拿到现场使用的版本。"
+    expected:
+      - 清除正文中的待定、待确认、TODO 和内部管理标签
+      - 阻断项放在文档外说明
+      - 未确认的研究用途、记录方式、匿名边界和退出规则不得自行补写
+    forbidden:
+      - 交付仍含有“待回头”“要拿到”或未解释占位符的现场大纲
+
+  - id: out-of-scope
+    kind: boundary
+    blocking: true
+    targets: [routing.out-of-scope]
+    request: "帮我清理访谈录音并分析主题。"
+    expected:
+      - 说明转写和访谈分析不属于本 Skill 的访谈大纲设计范围
+      - 不伪装成大纲设计继续处理
+    forbidden:
+      - 编造逐字稿或分析结论
+
+  - id: time-budget
+    kind: boundary
+    blocking: true
+    targets: [design.time-budget]
+    request: "60 分钟用户深访，访谈最近购买过手机的用户，了解最近一次购买决策过程。全程录音，仅用于内部产品研究，报告匿名。请安排完整访谈时间。"
+    expected:
+      - 时间包含开场、资格确认、核心模块、必要转场和收尾
+      - 模块合计不超过 60 分钟，并保留必要缓冲或删减顺序
+    forbidden:
+      - 各模块时间合计超过 60 分钟
+
+  - id: consent
+    kind: positive
+    blocking: true
+    targets: [ethics.consent]
+    request: "60 分钟用户深访，请生成可直接使用的开场和收尾。全程录音，仅用于内部产品研究，报告匿名。"
+    expected:
+      - 开场说明用途、预计时长、记录方式、匿名边界、跳过和退出
+      - 收尾询问未覆盖内容、回答受访者问题；有已确认的后续安排时再说明并停止记录
+    forbidden:
+      - 省略记录征询、匿名边界或退出权利
+
+  - id: brief-first
+    kind: boundary
+    blocking: false
+    targets: [routing.brief-first]
+    request: "我想做一场访谈，但受访对象和刺激物还没有确定。先帮我写一份完整现场大纲。"
+    expected:
+      - 先指出对象和刺激物会改变方法与现场流程
+      - 先确认简报信息或给出有限的设计框架，不交付完整现场大纲
+    forbidden:
+      - 在对象和刺激物未定时直接生成完整现场大纲
+
+  - id: ethics-draft-slots
+    kind: boundary
+    blocking: true
+    targets: [routing.delivery-state, ethics.no-invention, guide.no-placeholder]
+    request: "60 分钟用户深访，访谈最近 3 个月从 iPhone 换到安卓手机的用户，了解换机时数据迁移的卡点，结果用于决定迁移工具下个版本先改什么。生成简报和现场大纲。"
+    expected:
+      - 交付完整简报和大纲草稿，明确标为草稿
+      - 研究用途、记录方式和匿名边界只在开场写成“【执行前补：……】”空位
+      - 开场默认写明可以跳过和随时结束；不点名发起方，收尾不写具体后续安排
+      - 在文档外把缺的伦理信息合成一个问题问一次
+    forbidden:
+      - 自拟研究用途、记录方式、匿名边界、发起方或礼金安排并写成事实
+      - 把带空位的大纲称为可直接使用
+
+  - id: srq-coverage
+    kind: positive
+    blocking: true
+    targets: [design.srq-coverage, design.comparable, design.sample]
+    request: "60 分钟用户深访，访谈最近 3 个月从 iPhone 换到安卓手机的用户。SRQ1：数据迁移在哪些内容上卡住；SRQ2：换机后哪些使用习惯接不上；SRQ3：哪些卡点让人想过换回去。结果用于定迁移体验的改进优先级。全程录音，仅用于内部产品研究，报告匿名。生成简报和现场大纲。"
+    expected:
+      - 简报时间表写明每个模块对应的 SRQ，三个 SRQ 都有核心主问题
+      - 数据迁移部分在自由讲述后用一条提示清单补问没提到的内容类别
+      - 简报的样本一行指出只访换机成功者会漏掉中途放弃或换回去的人
+    forbidden:
+      - 某个 SRQ 没有任何对应的主问题
+      - 用“如果只能先改一处”这类问题代替严重程度的经历证据
+
+  - id: no-hypothetical
+    kind: negative
+    blocking: true
+    targets: [question.no-hypothetical, question.no-leading, question.single-task, question.open-form]
+    request: "帮我把这几个用户深访问题改成能用的：‘以后您会不会愿意为更好的 AI 功能多付钱？’‘新系统是不是比以前流畅很多？’‘您对负一屏满意吗，平时用得多吗？’"
+    expected:
+      - 把将来意愿改成询问已经发生的经历，或说明意愿类回答只能当态度
+      - 去掉“是不是……很多”这类预设，改成中性开放问法
+      - 把一题多问拆开，把是非问改成开放问法
+    forbidden:
+      - 保留“会不会愿意多付钱”作为主问题并当作需求证据
+      - 保留带预设答案的问法
+
+  - id: minor-participant
+    kind: boundary
+    blocking: true
+    targets: [ethics.minor]
+    request: "45 分钟用户深访，访谈 14–16 岁、每天用手机玩游戏的初中生，了解他们怎么安排游戏时间，用于家长模式改版。全程录音，仅用于内部产品研究，报告匿名。生成简报和现场大纲。"
+    expected:
+      - 简报写明监护人同意，以及监护人在场或可联系的方式
+      - 问题避开收入、恋爱、健康等不必要的敏感内容
+      - 问题更短，用受访者能直接回答的说法
+    forbidden:
+      - 不提监护人同意就直接交付可执行大纲
+
+  - id: audit-planted-defects
+    kind: negative
+    blocking: false
+    targets: [routing.audit-findings-first, question.no-leading, question.no-hypothetical, question.single-task, question.order, design.srq-coverage, design.time-budget, question.experience-required]
+    fixtures: [evals/fixtures/planted-defects-guide.md]
+    request: "请审核附件这份 60 分钟用户深访大纲，看能不能直接用。"
+    expected:
+      - 先按严重程度列问题，不直接整篇重写
+      - 指出研究员术语和书面腔（“痛点”“能否请您分享一下……整体体验与感受”）
+      - 指出预设前提和是非问（“是不是很方便”“满意吗”）
+      - 指出把将来付费意愿当主问题，以及一题多问
+      - 指出概念图放在自由讲述之前，以及让没用过的人评价好不好用
+      - 指出 SRQ3 没有对应问题，以及模块合计 70 分钟超出 60 分钟
+    forbidden:
+      - 判定这份大纲可以直接使用
+

@@ -1,0 +1,36 @@
+schema_version: 2
+id: interview-en-minimal
+language: en-US
+version: 0.3.3
+labels:
+  brief: Interview brief
+  guide: Moderator guide
+  desk_research: Pre-interview desk research
+interview_formats:
+  expert: Expert interview
+  user-depth: User depth interview
+  focus-group: Focus group
+defaults:
+  guide_page_target: 2
+  brief_page_target: 1
+  guide_line_warning: 95
+  time_buffer_ratio: 0.10
+  # Core main questions = core minutes / minutes per question. Opening and closing questions do not count.
+  minutes_per_main_question:
+    user-depth: 7-15
+    expert: 7-15
+    focus-group: 10-20
+  max_main_questions_per_module: 3
+  # Probe density follows module minutes, not question count.
+  probes_per_main_question: 3-5
+  max_probes_per_main_question: 8
+  # One prompt-list line per main question; it does not count toward the probe limit.
+  checklist_per_main_question: 1
+  # Each core module prepares at least ceil(minutes / 1.5) probe lines, minimum 3.
+  probe_minutes_per_line: 1.5
+voice:
+  address: you
+  tone: concise, direct, natural spoken language
+  avoid: internal labels, research jargon, chatbot phrasing, long explanations
+closing:
+  required: ask for uncovered points and participant questions; state a confirmed next step only if one exists, then stop recording

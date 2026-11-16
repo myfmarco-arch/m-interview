@@ -1,0 +1,46 @@
+schema_version: 2
+id: interview-zh-default
+language: zh-CN
+version: 0.3.3
+labels:
+  brief: 访谈简报
+  guide: 访谈大纲
+  desk_research: 访前案头调研
+  participant_notice: 访前告知
+  post_session_note: 访后速记
+interview_formats:
+  expert: 专家访谈
+  user-depth: 用户深访
+  focus-group: 座谈会
+defaults:
+  guide_page_target: 2
+  brief_page_target: 1
+  guide_line_warning: 95
+  time_buffer_ratio: 0.10
+  # 核心主问题数量由时间表推出：核心分钟数 ÷ 每题分钟数。开场题和收尾题不计入。
+  minutes_per_main_question:
+    user-depth: 7-15
+    expert: 7-15
+    focus-group: 10-20
+  max_main_questions_per_module: 3
+  # 追问密度由模块时长决定，不由题数决定。
+  probes_per_main_question: 3-5
+  # 只数一级追问。追问下面再挂一层缩短成 3 格缩进，计入密度，不计入这个上限。
+  max_probes_per_main_question: 8
+  # 每个主问题可再加 1 条提示清单（单独一行，不计入追问条数）。
+  checklist_per_main_question: 1
+  # 每个核心模块准备的追问行数不少于「模块分钟数 ÷ 1.5」，至少 3 行。13 分钟约 9 行，20 分钟约 14 行。
+  probe_minutes_per_line: 1.5
+  max_main_question_chars: 70
+  max_probe_chars: 40
+  version_format: vNN
+  date_format: YYYY-MM-DD
+voice:
+  address: 您
+  tone: 简短、直接、自然，像现场主持人口语
+  avoid: 研究报告腔、AI 腔、管理术语堆叠、连续假设、内部管理标签
+opening:
+  consent: 说明研究用途、预计时长、记录方式、匿名边界、跳过和退出；方案要求时说明发起方
+  no_right_answer: 没有标准答案，请按自己的经历回答
+closing:
+  required: 询问是否还有重要内容、回答受访者问题；如有已确认的后续安排再说明，随后停止记录

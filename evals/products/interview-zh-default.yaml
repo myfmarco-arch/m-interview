@@ -1,0 +1,65 @@
+version: 2
+suite: product
+product: interview-zh-default
+cases:
+  - id: naming
+    kind: positive
+    blocking: true
+    targets: [format.naming]
+    request: "为大折叠手机购买决策访谈生成首次交付文件名。"
+    expected:
+      - 使用 YYYY-MM-DD_项目简称_文档类型_vNN 格式
+      - 简报和大纲使用“访谈简报”“访谈大纲”文档类型
+    forbidden:
+      - 使用“最终版”“final2”或未递增版本号
+
+  - id: default-guide-format
+    kind: positive
+    blocking: true
+    targets: [format.time-range, format.question-count, format.guide-hand-card, format.guide-required, format.guide-minimal]
+    request: "60 分钟中文用户深访，访谈最近购买过手机的用户，了解最近一次购买手机的决策过程。全程录音，仅用于内部产品研究，报告匿名。生成现场大纲。"
+    expected:
+      - 模块标题带时间范围
+      - 每模块通常使用 1–2 个主问题，每题只保留必要追问
+      - 题号全篇连续
+      - 大纲不出现本模块目标、主持人注意、必问/可删标记或模块小结
+    forbidden:
+      - 把简报章节完整复制到现场大纲
+
+  - id: opening-and-closing
+    kind: positive
+    blocking: true
+    targets: [format.guide-closing, ethics.consent]
+    fixtures: [evals/fixtures/compact-guide.md]
+    request: "请审核附件中的 60 分钟用户深访现场大纲是否能直接使用。"
+    expected:
+      - 检查开场中的用途、时长、记录、跳过和退出
+      - 检查收尾中的未覆盖内容、受访者提问和停止记录；有已确认的后续安排时再检查
+    forbidden:
+      - 为压缩篇幅删除同意或收尾
+
+  - id: brief-format
+    kind: positive
+    blocking: true
+    targets: [format.brief-required]
+    request: "60 分钟用户深访，访谈最近购买过手机的用户，了解最近一次购买手机的决策过程。全程录音，仅用于内部产品研究，报告匿名。生成中文访谈简报。"
+    expected:
+      - 简报包含 SRQ、研究性质、方法、样本、同意、记录和时间字段
+      - 时间表写明每个模块对应的 SRQ、必问/可删和删减顺序
+      - 简报不复制完整现场问题列表
+    forbidden:
+      - 只输出问题清单，不提供研究简报
+
+  - id: natural-wording
+    kind: negative
+    blocking: true
+    targets: [format.natural-wording]
+    request: "帮我把这几个问题改得像主持人当面在问：‘能否请您分享一下在使用该功能过程中的整体体验与感受？’‘是什么促使您最终决定进行换机？’‘对于您来说，系统流畅度方面的核心诉求是什么？’"
+    expected:
+      - 改成短的口语问句，从具体经历进入
+      - 去掉“能否”“分享一下”“整体体验”“是什么促使”“进行”“对于您来说”“核心诉求”等书面腔
+      - 一个问题只问一件事
+    forbidden:
+      - 改写后仍保留“分享一下”“整体而言”“核心诉求”或同类书面腔
+      - 改写后问句里出现“痛点”“需求”等研究员术语
+

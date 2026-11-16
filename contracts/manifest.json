@@ -1,0 +1,19 @@
+{
+  "contract": "m-interview-contract-v1",
+  "revision": "2026-11-16.5",
+  "declaring_compatibility": null,
+  "note": "合同、官方验证规则或 conformance 用例变化后运行 python scripts/contract_manifest.py write。",
+  "files": {
+    "contracts/artifacts.md": "2fb6c11b6afc5c01f18ca2d75e57056d08d3e6f557a44feda5bc22ede6f7cc12",
+    "contracts/module-contract.md": "d9069ee39f5c3158ff98b7260994a0410bc43a4c616f7b1eb159c6fe41f39c5b",
+    "contracts/validation-contract.md": "a91aaa4c3c3ca89a5099ef51165099a6f864226888057e0aa3d219234b8d2d43",
+    "contracts/overlay-contract.md": "138d3f006f5dba968abde4f37ca4c787df4ce55f170b4426b088a000456d63db",
+    "references/services/validation/core.md": "2923021408a23ddeb116c55baa3329d7f0d037084acd2850af7f123ecb1de679",
+    "references/services/validation/expert.md": "5cb317c767000762f5df42d7eb479276f9a29498fd9570cc9b33df1a9d8236a6",
+    "references/services/validation/user-depth.md": "b866c8c5c3d4960443ac5a884b254c5699389e9b21f35df7add79977b68323cb",
+    "references/services/validation/focus-group.md": "532c8480840bcb2e70252cd6b8653cfd5c5a1d89e75a19e07cca552d4e1d5b57",
+    "references/services/validation/desk-research.md": "f22f05b952f0ef28bdc5a3014cac5c11bae5b6f418f819aeaf37c41c7f112354",
+    "evals/conformance/cases.yaml": "238b13be32acbb438b96d494d5040b5b31c37a45739787fc581dfc580b929571",
+    "evals/scoring.md": "903a18f7e2e58580212e8df4ae8c515988abba52f6dcf96c4a83bb3de4d32b35"
+  }
+}

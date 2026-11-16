@@ -1,0 +1,7 @@
+evals/runs/
+local.yaml
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store

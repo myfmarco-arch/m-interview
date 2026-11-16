@@ -1,0 +1,30 @@
+version: 2
+suite: product
+product: interview-en-minimal
+cases:
+  - id: english-guide
+    kind: positive
+    blocking: true
+    setup:
+      product: interview-en-minimal
+    targets: [ethics.consent]
+    request: "60-minute user depth interview with recent phone buyers about a recent purchase decision. The session will be recorded, used only for internal product research, and reported anonymously. Generate a concise moderator guide in English."
+    expected:
+      - Use English labels and questions from the selected product
+      - Keep consent, recording, anonymity, skip and exit language
+      - Keep the guide to short questions, necessary probes and a closing
+    forbidden:
+      - Use the Chinese default product title or long explanatory sections
+
+  - id: english-brief
+    kind: positive
+    blocking: true
+    setup:
+      product: interview-en-minimal
+    targets: [ethics.consent]
+    request: "60-minute expert interview with an enterprise product expert about strategic control points. The session will be recorded, used only for internal product research, and reported anonymously. Generate a concise English interview brief."
+    expected:
+      - Separate research information, method evidence, consent and execution constraints
+      - Keep the brief separate from the moderator guide
+    forbidden:
+      - Output only a list of interview questions

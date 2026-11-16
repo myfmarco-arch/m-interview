@@ -1,0 +1,20 @@
+schema_version: 2
+id: example-custom
+description: 示例团队偏好：把现场大纲标题替换为“主持人手卡”，并提供团队标准同意信息
+targets: interview-zh-default
+overrides:
+  writing:
+    mode: extend
+    file: writing.md
+  guide_format:
+    mode: replace
+    file: guide-format.md
+validation:
+  add:
+    - file: validation/team-checks.md
+      trigger: 启用 example-custom 时
+ethics_defaults:
+  mode: add
+  file: ethics-defaults.md
+evals:
+  - evals/cases.yaml

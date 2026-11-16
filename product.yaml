@@ -1,0 +1,91 @@
+schema_version: 2
+id: interview-zh-default
+version: 0.3.3
+framework_contract: m-interview-contract-v1
+
+contracts:
+  artifacts: contracts/artifacts.md
+  module: contracts/module-contract.md
+  validation: contracts/validation-contract.md
+  overlay: contracts/overlay-contract.md
+
+services:
+  routing: references/services/task-routing.md
+  research_design: references/services/research-design.md
+  desk_research: references/services/desk-research.md
+
+validation:
+  always:
+    - references/services/validation/core.md
+  when:
+    - file: references/products/interview-zh-default/format-validation.md
+      trigger: 使用 interview-zh-default 产品交付简报或现场大纲
+    - file: references/services/validation/expert.md
+      trigger: 访谈类型为专家访谈
+    - file: references/services/validation/user-depth.md
+      trigger: 访谈类型为用户深访
+    - file: references/services/validation/focus-group.md
+      trigger: 访谈类型为座谈会
+    - file: references/services/validation/desk-research.md
+      trigger: 启用访前案头调研
+
+modules:
+  formats:
+    user-depth: references/modules/formats/user-depth.md
+    expert: references/modules/formats/expert.md
+    focus-group: references/modules/formats/focus-group.md
+  method_index: references/modules/methods/index.md
+  methods:
+    common-fact: references/modules/methods/common-fact.md
+    user-depth-scenarios: references/modules/methods/user-depth-scenarios.md
+    user-depth-non-use: references/modules/methods/user-depth-non-use.md
+    user-depth-evaluation: references/modules/methods/user-depth-evaluation.md
+    user-depth-meaning: references/modules/methods/user-depth-meaning.md
+    expert: references/modules/methods/expert.md
+    focus-group: references/modules/methods/focus-group.md
+  knowledge:
+    question-craft: references/modules/knowledge/question-craft.md
+
+default_product: interview-zh-default
+
+products:
+  interview-zh-default:
+    profile: references/products/interview-zh-default/profile.yaml
+    workflow: references/products/interview-zh-default/workflow.md
+    writing: references/products/interview-zh-default/writing.md
+    brief_format: references/products/interview-zh-default/brief-template.md
+    guide_format: references/products/interview-zh-default/guide-template.md
+    desk_research_format: references/products/interview-zh-default/desk-template.md
+    naming: references/products/interview-zh-default/naming.md
+  interview-en-minimal:
+    profile: references/products/interview-en-minimal/profile.yaml
+    workflow: references/products/interview-en-minimal/workflow.md
+    writing: references/products/interview-en-minimal/writing.md
+    brief_format: references/products/interview-en-minimal/brief-template.md
+    guide_format: references/products/interview-en-minimal/guide-template.md
+    naming: references/products/interview-en-minimal/naming.md
+
+product: interview-zh-default
+local_override: local.yaml
+
+adapters:
+  default: markdown
+  available:
+    markdown: references/adapters/markdown.md
+    expert-external: references/adapters/expert-external.md
+    participant-notice: references/adapters/participant-notice.md
+    post-session-note: references/adapters/post-session-note.md
+
+tools:
+  lint_guide: scripts/lint_guide.py
+  check_repo: scripts/check_repo.py
+  run_evals: scripts/run_evals.py
+  contract_manifest: scripts/contract_manifest.py
+
+overlays: []
+
+evals:
+  conformance: evals/conformance/cases.yaml
+  modules: evals/modules/cases.yaml
+  product: evals/products/interview-zh-default.yaml
+  product_en_minimal: evals/products/interview-en-minimal.yaml

@@ -1,0 +1,50 @@
+version: 2
+suite: modules
+contract: m-interview-contract-v1
+cases:
+  - id: johari-boundary
+    kind: positive
+    blocking: true
+    targets: [question.knowledge-boundary]
+    request: "60 分钟用户深访，研究员想问用户的‘核心痛点’，但用户平时不用这个词。"
+    expected:
+      - 先用具体经历、动作和结果提问
+      - 不把研究员术语当成受访者理解的前提
+    forbidden:
+      - 直接要求用户解释自己的核心痛点
+
+  - id: method-not-overclaim
+    kind: boundary
+    blocking: true
+    targets: [evidence.no-prevalence]
+    request: "在 90 分钟座谈会中，用排序问题了解 6 位参与者最重视的功能。"
+    expected:
+      - 将结果限定为本组受访者的取舍理由
+      - 不把排序写成总体权重或市场排名
+    forbidden:
+      - 声称排序代表所有用户的功能优先级
+
+  - id: guide-length
+    kind: positive
+    blocking: false
+    targets: [guide.no-placeholder]
+    request: "60 分钟用户深访，受访者已确认最近一次购买过手机，目标是还原购买决策。全程录音，仅用于内部产品研究，报告匿名。现场需要一页到两页手卡。"
+    expected:
+      - 用短主问、必要追问和时间范围压缩现场大纲
+      - 删除说明书式小节，不删除开场和收尾
+    forbidden:
+      - 用大段方法说明代替现场问题
+
+  - id: concept-test-neutral
+    kind: positive
+    blocking: true
+    targets: [question.order, question.no-hypothetical, question.no-leading]
+    request: "60 分钟用户深访，最后 12 分钟给受访者看一张‘换机助手’新功能的概念图。受访者是最近 3 个月换过手机的用户。全程录音，仅用于内部产品研究，报告匿名。只写概念图这一段的问题。"
+    expected:
+      - 先不解释，先问第一反应和受访者自己的理解
+      - 用受访者刚讲过的真实经历对照概念，而不是问“会不会用”
+      - 问看不明白和不放心的地方，问法不预设吸引点
+    forbidden:
+      - 出示前先介绍功能卖点
+      - 用“您会不会用”“最吸引您的是哪里”作为主问题
+

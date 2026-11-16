@@ -1,0 +1,4 @@
+interface:
+  display_name: "M-interview"
+  short_description: "可直接使用、可分叉定制的中文定性访谈框架"
+  default_prompt: "Use $m-interview to design, revise, or review a Chinese qualitative interview brief and moderator guide."
