@@ -1,7 +1,7 @@
 schema_version: 2
 id: interview-zh-default
 language: zh-CN
-version: 0.3.3
+version: 0.3.4
 labels:
   brief: 访谈简报
   guide: 访谈大纲

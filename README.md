@@ -12,7 +12,7 @@ M-interview 是中文定性研究访谈设计 Skill。它从研究目标和业�
 
 ## 兼容性状态
 
-当前 `0.3.3` 不声明合同兼容性。`contracts/manifest.json` 锁定当前合同 revision；修改合同、验证规则或 conformance 用例后，必须重新评测。
+当前 `0.3.4` 不声明合同兼容性。`contracts/manifest.json` 锁定当前合同 revision；修改合同、验证规则或 conformance 用例后，必须重新评测。
 
 现有方法卡已按场景拆分，但仍标记为 legacy 方法参考。它们可以支持研究设计，暂不声明完整的模块合同兼容性；新增或升级的方法卡必须遵守模块合同并通过 modules 评测。
 

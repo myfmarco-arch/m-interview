@@ -106,7 +106,11 @@ def plain(text: str) -> str:
 
 
 def char_count(text: str) -> int:
-    return len(re.sub(r"\s", "", plain(text)))
+    """中文按字数；英文按词数折算（1 词约等于 2.5 个汉字的阅读长度）。"""
+    body = plain(text)
+    if len(re.findall(r"[A-Za-z]", body)) > len(body) * 0.5:
+        return int(len(body.split()) * 2.5)
+    return len(re.sub(r"\s", "", body))
 
 
 def check_brief(text: str, errors: list, warnings: list) -> None:
@@ -162,8 +166,8 @@ def check_wording(number: int, raw: str, role: str, profile: dict, warnings: lis
     text = plain(raw)
     snippet = f"line {number}: {text[:60]}"
     marks = text.count("？") + text.count("?")
-    if (role == "main" and marks > 1) or marks > 2:
-        warnings.append(("question.single-task", f"guide {snippet} (more than {'one question' if role == 'main' else 'two questions'})"))
+    if marks > 2:
+        warnings.append(("question.single-task", f"guide {snippet} (more than two questions in one line)"))
     for phrase in AI_PHRASES:
         if phrase.lower() in text.lower():
             warnings.append(("format.natural-wording", f"guide {snippet} (written or chatbot phrasing: '{phrase}')"))
@@ -199,7 +203,9 @@ def check_guide(text: str, errors: list, warnings: list, profile: dict, allow_te
     lines = text.splitlines()
     if len(lines) > 120:
         warnings.append(("format.guide-length", "guide: over 120 lines; this will not fit on two pages"))
-    if len(lines) > profile["guide_line_warning"]:
+    header_duration = find_duration(text, "\n".join(lines[:6]))
+    line_budget = profile["guide_line_warning"] * max(1.0, (header_duration or 60) / 60)
+    if len(lines) > line_budget:
         warnings.append(("format.guide-length", "guide: over the concise content budget; remove nonessential text before layout compression"))
     if not any(word in text for word in CLOSING_WORDS):
         errors.append(("format.guide-closing", "guide: missing a closing module (收尾 / 总结)"))
